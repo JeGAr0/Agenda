@@ -15,6 +15,7 @@
 // Nom fitxer [ agenda.txt ]
 
 char seleccionarOpcio;
+string nom = "", cognom = "", dni = "", datNaix = "", corrElec = "";
 Console.CursorVisible = false;
 Console.ForegroundColor = ConsoleColor.Red;
 
@@ -27,6 +28,33 @@ do
     { 
         case '1':
             EsborrarConsola();
+            do
+            {
+                if (!EsAlfabetic(nom) || !EsAlfabetic(cognom) || !dniValid(dni))
+                {
+                    Console.WriteLine("Algun dels valors introduits son erronis");
+                }
+                EsborrarConsola();
+                Console.WriteLine("Nom: ");
+                nom = Console.ReadLine();
+
+                Console.WriteLine("Cognom: ");
+                cognom = Console.ReadLine();
+
+                Console.WriteLine("Dni: ");
+                dni = Console.ReadLine();
+
+                Console.WriteLine("Data naixement (dd/MM/yyyy): ");
+                datNaix = Console.ReadLine();
+
+                Console.WriteLine("Correu electronic: ");
+                corrElec = Console.ReadLine();
+
+
+
+            } while (!EsAlfabetic(nom) && !EsAlfabetic(cognom));
+
+            CompteEnrera();
             break;
         case '2':
             EsborrarConsola();
@@ -44,8 +72,8 @@ do
             EsborrarConsola();
             break;
     }
-
-} while (seleccionarOpcio >= '1' && seleccionarOpcio < '5') ;
+    EsborrarConsola();
+} while (seleccionarOpcio >= '1' && seleccionarOpcio < '5' || seleccionarOpcio == 'Q' || seleccionarOpcio == 'q') ;
 
 
 // MENU PRINCIPAL
@@ -77,6 +105,13 @@ static void Menu()
 }
 
 // SUBMENUS
+
+    // AFEGIR
+static void afegir()
+{
+
+
+}
 static void Submenu1()
 {
     Console.WriteLine(Centrar(" -------------- AFEGIR ------------------- "));
@@ -88,6 +123,69 @@ static void Submenu1()
     Console.WriteLine(Centrar("|            5. MOSTRAR AGENDA            |"));
     Console.WriteLine(Centrar("|                                         |"));
     Console.WriteLine(Centrar("|-----------------------------------------|"));
+}
+
+// VERIFICAR CARACTERS ALFABETICS
+static bool EsAlfabetic(string cadena)
+{
+    foreach (char caracter in cadena)
+    {
+        if (!char.IsLetter(caracter))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+// VERIFICAR DNI
+static bool dniValid(string dni)
+{
+    if (dni.Length != 9)
+    {
+        return false;
+    }
+
+    for (int i = 0; i < 8; i++)
+    {
+        if (!char.IsDigit(dni[i]))
+        {
+            return false;
+        }
+    }
+
+    if (!char.IsLetter(dni[8]))
+    {
+        return false;
+    }
+
+    int valorNumerico;
+    if (!int.TryParse(dni.Substring(0, 8), out valorNumerico))
+    {
+        return false;
+    }
+
+    string letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+    int resto = valorNumerico % 23;
+
+    if (dni[8] != letras[resto])
+    {
+        return false;
+    }
+    return true;
+}
+
+// VERIFICAR DATA
+static bool dataValida(string datNaix, out DateTime data)
+{
+    if (DateTime.TryParseExact(datNaix, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out data))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // ESBORRAR CONSOLA
