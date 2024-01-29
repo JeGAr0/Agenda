@@ -14,8 +14,15 @@
 
 // Nom fitxer [ agenda.txt ]
 
+using System.Globalization;
+using System.Text.RegularExpressions;
+
 char seleccionarOpcio;
 string nom = "", cognom = "", dni = "", datNaix = "", corrElec = "";
+// "Jose", "Ayala", "12345678A", "2000-01-01", "jose.ayala@example.com"
+
+string rutaArxiu = "Agenda.txt";
+
 Console.CursorVisible = false;
 Console.ForegroundColor = ConsoleColor.Red;
 
@@ -27,32 +34,28 @@ do
     switch (seleccionarOpcio)
     { 
         case '1':
-            EsborrarConsola();
             do
             {
-                if (!EsAlfabetic(nom) || !EsAlfabetic(cognom) || !dniValid(dni))
-                {
-                    Console.WriteLine("Algun dels valors introduits son erronis");
-                }
                 EsborrarConsola();
+
                 Console.WriteLine("Nom: ");
                 nom = Console.ReadLine();
-
                 Console.WriteLine("Cognom: ");
                 cognom = Console.ReadLine();
-
                 Console.WriteLine("Dni: ");
                 dni = Console.ReadLine();
-
-                Console.WriteLine("Data naixement (dd/MM/yyyy): ");
+                Console.WriteLine("Data naixement (yyyy-mm-dd): ");
                 datNaix = Console.ReadLine();
-
                 Console.WriteLine("Correu electronic: ");
                 corrElec = Console.ReadLine();
 
+            } while (!EsAlfabetic(nom) || !EsAlfabetic(cognom) || !DniValid(dni) || !DataValida(datNaix) || !CorreuValid(corrElec));
 
+            Console.WriteLine("Tota la informacio introduida es correcta");
+            CompteEnreraReduit();
+            EsborrarConsola();
 
-            } while (!EsAlfabetic(nom) && !EsAlfabetic(cognom));
+            AfegirArxiu(rutaArxiu, CapitaliTZAR(nom), CapitaliTZAR(cognom), dni, datNaix, corrElec);
 
             CompteEnrera();
             break;
@@ -114,15 +117,7 @@ static void afegir()
 }
 static void Submenu1()
 {
-    Console.WriteLine(Centrar(" -------------- AFEGIR ------------------- "));
-    Console.WriteLine(Centrar("|                                         |"));
-    Console.WriteLine(Centrar("|            1. AFEGIR                    |"));
-    Console.WriteLine(Centrar("|            2. VISUALITZAR               |"));
-    Console.WriteLine(Centrar("|            3. MODIFICAR                 |"));
-    Console.WriteLine(Centrar("|            4. ELIMINAR                  |"));
-    Console.WriteLine(Centrar("|            5. MOSTRAR AGENDA            |"));
-    Console.WriteLine(Centrar("|                                         |"));
-    Console.WriteLine(Centrar("|-----------------------------------------|"));
+
 }
 
 // VERIFICAR CARACTERS ALFABETICS
@@ -138,8 +133,16 @@ static bool EsAlfabetic(string cadena)
     return true;
 }
 
+    // CAPITALITZAR CARACTERS ALFABETICS
+    static string CapitaliTZAR(string cadena)
+    {
+        TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+
+        return textInfo.ToTitleCase(cadena.ToLower());
+    }
+
 // VERIFICAR DNI
-static bool dniValid(string dni)
+static bool DniValid(string dni)
 {
     if (dni.Length != 9)
     {
@@ -159,16 +162,16 @@ static bool dniValid(string dni)
         return false;
     }
 
-    int valorNumerico;
-    if (!int.TryParse(dni.Substring(0, 8), out valorNumerico))
+    int valorNumeric;
+    if (!int.TryParse(dni.Substring(0, 8), out valorNumeric))
     {
         return false;
     }
 
-    string letras = "TRWAGMYFPDXBNJZSQVHLCKE";
-    int resto = valorNumerico % 23;
+    string lletres = "TRWAGMYFPDXBNJZSQVHLCKE";
+    int resta = valorNumeric % 23;
 
-    if (dni[8] != letras[resto])
+    if (dni[8] != lletres[resta])
     {
         return false;
     }
@@ -176,9 +179,9 @@ static bool dniValid(string dni)
 }
 
 // VERIFICAR DATA
-static bool dataValida(string datNaix, out DateTime data)
+static bool DataValida(string dataTexte)
 {
-    if (DateTime.TryParseExact(datNaix, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out data))
+    if (DateTime.TryParse(dataTexte, out DateTime data))
     {
         return true;
     }
@@ -186,6 +189,13 @@ static bool dataValida(string datNaix, out DateTime data)
     {
         return false;
     }
+}
+
+// VALIDACIO DE CORREU ELECTRONIC [REGEX]
+static bool CorreuValid(string correu)
+{
+    string condicio = @"^[a-z\d]{3}@[a-z]{3}\.(com|es)$";
+    return Regex.IsMatch(correu, condicio);
 }
 
 // ESBORRAR CONSOLA
@@ -213,5 +223,64 @@ static void CompteEnrera()
         Thread.Sleep(1000);
 
         num--;
+    }
+}
+// TEMPS ESPERA 2
+static void CompteEnreraReduit()
+{
+    int num = 3;
+    while (num > 0)
+    {
+        Console.Write("\r");
+        Console.Write(num);
+        Thread.Sleep(1000);
+
+        num--;
+    }
+}
+
+// AFEGIR CONTINGUT A DOCUMENT .TXT
+static void AfegirArxiu(string rutaArxiu, string nom, string cognom, string dni, string datNaix, string corrElec)
+{
+    try
+    {
+        string informacio = $"{nom}, {cognom}, {dni}, {datNaix}, {corrElec}";
+
+        using (StreamWriter writer = File.AppendText(rutaArxiu))
+        {
+            writer.WriteLine(informacio);
+        }
+
+        Console.WriteLine("S'ha afegit la informació a l'arxiu correctament.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"S'ha produït un error al afegir la informació a l'arxiu: {ex.Message}");
+    }
+}
+
+
+// TROBAR INFORMACIO A L'ARXIU
+static void Trobar(string rutaArxiu, string valorABuscar)
+{
+    try
+    {
+        string[] linies = File.ReadAllLines(rutaArxiu);
+
+        foreach (string linia in linies)
+        {
+            if (linia.Contains(valorABuscar))
+            {
+                Console.WriteLine($"S'ha trobat la seguent informació '{valorABuscar}':");
+                Console.WriteLine(linia);
+                return;
+            }
+        }
+
+        Console.WriteLine($"No s'ha trobat cap coincidencia'{valorABuscar}'.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error al buscar la informacio a l'axiu: {ex.Message}");
     }
 }
