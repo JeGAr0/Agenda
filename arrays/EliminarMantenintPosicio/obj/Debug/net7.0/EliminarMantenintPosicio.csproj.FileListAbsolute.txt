@@ -1,0 +1,14 @@
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\bin\Debug\net7.0\EliminarMantenintPosicio.exe
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\bin\Debug\net7.0\EliminarMantenintPosicio.deps.json
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\bin\Debug\net7.0\EliminarMantenintPosicio.runtimeconfig.json
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\bin\Debug\net7.0\EliminarMantenintPosicio.dll
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\bin\Debug\net7.0\EliminarMantenintPosicio.pdb
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\obj\Debug\net7.0\EliminarMantenintPosicio.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\obj\Debug\net7.0\EliminarMantenintPosicio.AssemblyInfoInputs.cache
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\obj\Debug\net7.0\EliminarMantenintPosicio.AssemblyInfo.cs
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\obj\Debug\net7.0\EliminarMantenintPosicio.csproj.CoreCompileInputs.cache
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\obj\Debug\net7.0\EliminarMantenintPosicio.dll
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\obj\Debug\net7.0\refint\EliminarMantenintPosicio.dll
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\obj\Debug\net7.0\EliminarMantenintPosicio.pdb
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\obj\Debug\net7.0\EliminarMantenintPosicio.genruntimeconfig.cache
+C:\Users\JEAG\Documents\IES_MONTILIVI\MP03\Agenda\arrays\EliminarMantenintPosicio\obj\Debug\net7.0\ref\EliminarMantenintPosicio.dll

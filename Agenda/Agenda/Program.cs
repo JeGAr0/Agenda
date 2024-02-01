@@ -14,13 +14,14 @@
 
 // Nom fitxer [ agenda.txt ]
 
+using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
 char seleccionarOpcio;
 string nom = "", cognom = "", dni = "", datNaix = "", corrElec = "";
 // "Jose", "Ayala", "12345678A", "2000-01-01", "jose.ayala@example.com"
-
+string modificar = "", visualitzar = "";
 string rutaArxiu = "Agenda.txt";
 
 Console.CursorVisible = false;
@@ -38,15 +39,15 @@ do
             {
                 EsborrarConsola();
 
-                Console.WriteLine("Nom: ");
+                Console.Write("Nom: ");
                 nom = Console.ReadLine();
-                Console.WriteLine("Cognom: ");
+                Console.Write("Cognom: ");
                 cognom = Console.ReadLine();
-                Console.WriteLine("Dni: ");
+                Console.Write("Dni: ");
                 dni = Console.ReadLine();
-                Console.WriteLine("Data naixement (yyyy-mm-dd): ");
+                Console.Write("Data naixement (yyyy-mm-dd): ");
                 datNaix = Console.ReadLine();
-                Console.WriteLine("Correu electronic: ");
+                Console.Write("Correu electronic: ");
                 corrElec = Console.ReadLine();
 
             } while (!EsAlfabetic(nom) || !EsAlfabetic(cognom) || !DniValid(dni) || !DataValida(datNaix) || !CorreuValid(corrElec));
@@ -55,15 +56,50 @@ do
             CompteEnreraReduit();
             EsborrarConsola();
 
-            AfegirArxiu(rutaArxiu, CapitaliTZAR(nom), CapitaliTZAR(cognom), dni, datNaix, corrElec);
+            string afegir = AfegirArxiu(rutaArxiu, Capitalitzar(nom), Capitalitzar(cognom), dni, datNaix, corrElec);
+            
+            if (trobatEnLinia != null)
+            {
+                Console.WriteLine("Valor trobar: ");
+                Console.WriteLine(trobatEnLinia);
+            }
+            else
+            {
+                Console.WriteLine("El valor no s'ha trobar enlloc");
+            }
 
             CompteEnrera();
             break;
+
         case '2':
             EsborrarConsola();
+            Console.WriteLine("nom / cognom / DNI / data naixement / correu electronic");
+            Console.Write("Introdueix algun parametre per trobar l'entrada: ");
+            visualitzar = Console.ReadLine();
+            EsborrarConsola();
+
+            string trobatEnLinia = Trobar(rutaArxiu, visualitzar);
+
+            if (trobatEnLinia != null)
+            {
+                Console.WriteLine("Valor trobar: ");
+                Console.WriteLine(trobatEnLinia);
+            }
+            else
+            {
+                Console.WriteLine("El valor no s'ha trobar enlloc");
+            }
+            CompteEnrera();
             break;
+
         case '3':
             EsborrarConsola();
+            Console.WriteLine("nom / cognom / DNI / data naixement / correu electronic");
+            Console.Write("Introdueix algun parametre per trobar l'entrada: ");
+            visualitzar = Console.ReadLine();
+
+            Trobar(rutaArxiu, visualitzar);
+            
             break;
         case '4':
             EsborrarConsola();
@@ -76,7 +112,7 @@ do
             break;
     }
     EsborrarConsola();
-} while (seleccionarOpcio >= '1' && seleccionarOpcio < '5' || seleccionarOpcio == 'Q' || seleccionarOpcio == 'q') ;
+} while (seleccionarOpcio > '1' && seleccionarOpcio < '6') ;
 
 
 // MENU PRINCIPAL
@@ -107,18 +143,6 @@ static void Menu()
 
 }
 
-// SUBMENUS
-
-    // AFEGIR
-static void afegir()
-{
-
-
-}
-static void Submenu1()
-{
-
-}
 
 // VERIFICAR CARACTERS ALFABETICS
 static bool EsAlfabetic(string cadena)
@@ -134,7 +158,7 @@ static bool EsAlfabetic(string cadena)
 }
 
     // CAPITALITZAR CARACTERS ALFABETICS
-    static string CapitaliTZAR(string cadena)
+    static string Capitalitzar(string cadena)
     {
         TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
 
@@ -194,8 +218,15 @@ static bool DataValida(string dataTexte)
 // VALIDACIO DE CORREU ELECTRONIC [REGEX]
 static bool CorreuValid(string correu)
 {
-    string condicio = @"^[a-z\d]{3}@[a-z]{3}\.(com|es)$";
+    string condicio = @"^[a-z\d]{3,}@[a-z]{3,}\.(com|cat)$";
     return Regex.IsMatch(correu, condicio);
+}
+
+// VALIDACIO DE Telefon [REGEX]
+static bool TelefonValid(string telefon)
+{
+    string condicio = @"^[6,7][0-9]{8}$";
+    return Regex.IsMatch(telefon, condicio);
 }
 
 // ESBORRAR CONSOLA
@@ -242,45 +273,28 @@ static void CompteEnreraReduit()
 // AFEGIR CONTINGUT A DOCUMENT .TXT
 static void AfegirArxiu(string rutaArxiu, string nom, string cognom, string dni, string datNaix, string corrElec)
 {
-    try
-    {
-        string informacio = $"{nom}, {cognom}, {dni}, {datNaix}, {corrElec}";
+    string informacio = $"{nom}, {cognom}, {dni}, {datNaix}, {corrElec}";
 
-        using (StreamWriter writer = File.AppendText(rutaArxiu))
-        {
-            writer.WriteLine(informacio);
-        }
-
-        Console.WriteLine("S'ha afegit la informació a l'arxiu correctament.");
-    }
-    catch (Exception ex)
+    using (StreamWriter writer = File.AppendText(rutaArxiu))
     {
-        Console.WriteLine($"S'ha produït un error al afegir la informació a l'arxiu: {ex.Message}");
+        return informacio;
     }
+
+    return null;
 }
 
-
 // TROBAR INFORMACIO A L'ARXIU
-static void Trobar(string rutaArxiu, string valorABuscar)
+static string Trobar(string rutaArxiu, string valorABuscar)
 {
-    try
-    {
-        string[] linies = File.ReadAllLines(rutaArxiu);
+    string[] linies = File.ReadAllLines(rutaArxiu);
 
-        foreach (string linia in linies)
+    foreach (string linia in linies)
+    {
+        if (linia.Contains(valorABuscar))
         {
-            if (linia.Contains(valorABuscar))
-            {
-                Console.WriteLine($"S'ha trobat la seguent informació '{valorABuscar}':");
-                Console.WriteLine(linia);
-                return;
-            }
+            return linia;
         }
+    }
 
-        Console.WriteLine($"No s'ha trobat cap coincidencia'{valorABuscar}'.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error al buscar la informacio a l'axiu: {ex.Message}");
-    }
+    return null;
 }
