@@ -19,8 +19,8 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 
 char seleccionarOpcio;
-string nom = "", cognom = "", dni = "", datNaix = "", corrElec = "";
-// "Jose", "Ayala", "12345678A", "2000-01-01", "jose.ayala@example.com"
+string nom = "", cognom = "", dni = "", datNaix = "", corrElec = "", telefon="";
+// "Jose", "Ayala", "12345678A", "2000-01-01", "jose.ayala@example.com, 600000000"
 string modificar = "", visualitzar = "";
 string rutaArxiu = "Agenda.txt";
 
@@ -49,26 +49,28 @@ do
                 datNaix = Console.ReadLine();
                 Console.Write("Correu electronic: ");
                 corrElec = Console.ReadLine();
+                Console.Write("Telefon: ");
+                telefon = Console.ReadLine();
 
-            } while (!EsAlfabetic(nom) || !EsAlfabetic(cognom) || !DniValid(dni) || !DataValida(datNaix) || !CorreuValid(corrElec));
+            } while (!EsAlfabetic(nom) || !EsAlfabetic(cognom) || !DniValid(dni) || !DataValida(datNaix) || !CorreuValid(corrElec) || !TelefonValid(telefon));
 
             Console.WriteLine("Tota la informacio introduida es correcta");
             CompteEnreraReduit();
             EsborrarConsola();
 
-            string afegir = AfegirArxiu(rutaArxiu, Capitalitzar(nom), Capitalitzar(cognom), dni, datNaix, corrElec);
-            
-            if (trobatEnLinia != null)
+            string informacio = AfegirArxiu(rutaArxiu, Capitalitzar(nom), Capitalitzar(cognom), dni, datNaix, corrElec, telefon);
+
+            if (informacio != null)
             {
-                Console.WriteLine("Valor trobar: ");
-                Console.WriteLine(trobatEnLinia);
+                Console.WriteLine("Entrada afegida: ");
+                Console.WriteLine(informacio);
             }
             else
             {
-                Console.WriteLine("El valor no s'ha trobar enlloc");
+                Console.WriteLine("No s'ha pogut afegir la nova entrada");
             }
-
             CompteEnrera();
+
             break;
 
         case '2':
@@ -97,10 +99,61 @@ do
             Console.WriteLine("nom / cognom / DNI / data naixement / correu electronic");
             Console.Write("Introdueix algun parametre per trobar l'entrada: ");
             visualitzar = Console.ReadLine();
+            EsborrarConsola();
 
-            Trobar(rutaArxiu, visualitzar);
-            
+            trobatEnLinia = Trobar(rutaArxiu, visualitzar);
+
+            if (trobatEnLinia != null)
+            {
+                Console.WriteLine("Valor trobar: ");
+                Console.WriteLine(trobatEnLinia);
+                Console.WriteLine("Reescriu el que vols modificar");
+                CompteEnreraReduit();
+
+                do
+                {
+                    EsborrarConsola();
+
+                    Console.WriteLine(trobatEnLinia);
+                    Console.Write("Nom: ");
+                    nom = Console.ReadLine();
+                    Console.Write("Cognom: ");
+                    cognom = Console.ReadLine();
+                    Console.Write("Dni: ");
+                    dni = Console.ReadLine();
+                    Console.Write("Data naixement (yyyy-mm-dd): ");
+                    datNaix = Console.ReadLine();
+                    Console.Write("Correu electronic: ");
+                    corrElec = Console.ReadLine();
+                    Console.Write("Telefon: ");
+                    telefon = Console.ReadLine();
+
+                } while (!EsAlfabetic(nom) || !EsAlfabetic(cognom) || !DniValid(dni) || !DataValida(datNaix) || !CorreuValid(corrElec) || !TelefonValid(telefon));
+
+                Console.WriteLine("Tota la informacio introduida es correcta");
+                CompteEnreraReduit();
+                EsborrarConsola();
+
+                string afegir = AfegirArxiu(rutaArxiu, Capitalitzar(nom), Capitalitzar(cognom), dni, datNaix, corrElec, telefon);
+
+                if (afegir != null)
+                {
+                    Console.WriteLine("Entrada modificada: ");
+                    Console.WriteLine(afegir);
+                }
+                else
+                {
+                    Console.WriteLine("No s'ha pogut modificar l'entrada");
+                }
+            }
+            else
+            {
+                Console.WriteLine("El valor no s'ha trobar enlloc");
+            }
+
+            CompteEnrera();
             break;
+
         case '4':
             EsborrarConsola();
             break;
@@ -112,6 +165,7 @@ do
             break;
     }
     EsborrarConsola();
+
 } while (seleccionarOpcio > '1' && seleccionarOpcio < '6') ;
 
 
@@ -218,14 +272,14 @@ static bool DataValida(string dataTexte)
 // VALIDACIO DE CORREU ELECTRONIC [REGEX]
 static bool CorreuValid(string correu)
 {
-    string condicio = @"^[a-z\d]{3,}@[a-z]{3,}\.(com|cat)$";
+    string condicio = @"^[a-z\d]{3}@[a-z]{3}\.(com|cat)$";
     return Regex.IsMatch(correu, condicio);
 }
 
 // VALIDACIO DE Telefon [REGEX]
 static bool TelefonValid(string telefon)
 {
-    string condicio = @"^[6,7][0-9]{8}$";
+    string condicio = @"^[6,7][0-9]{9}$";
     return Regex.IsMatch(telefon, condicio);
 }
 
@@ -271,9 +325,9 @@ static void CompteEnreraReduit()
 }
 
 // AFEGIR CONTINGUT A DOCUMENT .TXT
-static void AfegirArxiu(string rutaArxiu, string nom, string cognom, string dni, string datNaix, string corrElec)
+static string AfegirArxiu(string rutaArxiu, string nom, string cognom, string dni, string datNaix, string corrElec, string telefon)
 {
-    string informacio = $"{nom}, {cognom}, {dni}, {datNaix}, {corrElec}";
+    string informacio = $"{nom}, {cognom}, {dni}, {datNaix}, {corrElec}, {telefon}";
 
     using (StreamWriter writer = File.AppendText(rutaArxiu))
     {
@@ -298,3 +352,5 @@ static string Trobar(string rutaArxiu, string valorABuscar)
 
     return null;
 }
+
+// ESBORRAR ENTRADA A L'ARXIU

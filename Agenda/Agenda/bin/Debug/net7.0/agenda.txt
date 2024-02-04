@@ -1,4 +1,1 @@
 nom, cognom, dni, datnai, correlec
-
-Jose, Ayala, 38717006W, 2000-01-01, abc@xyz.com
-
